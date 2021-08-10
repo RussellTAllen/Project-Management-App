@@ -5,6 +5,16 @@ const Project = require('../models/Project')
 
 
 module.exports = {
+    getProjects: async (req, res) => {
+        User.findById({ _id: req.user._id }).populate('projects').exec((err, document)=>{
+                if(err)
+                    res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
+                else{
+                    res.status(200).json({ projects: document.projects, authenticated: true })
+                }
+        
+            })
+    },
     createProject: async (req, res) => {
         
         const project = new Project(req.body)

@@ -5,19 +5,32 @@ import ProjectService from '../services/ProjectService'
 import { AuthContext } from '../context/AuthContext'
 import Message from './Message'
 
+// let user = user
+
 
 function Todos(props) {
     const [todo, setTodo] = useState({ item: '' })
     const [todos, setTodos] = useState([])
     const [project, setProject] = useState({ name: '' })
+    const [projects, setProjects] = useState([])
     const [message, setMessage] = useState(null)
     const authContext = useContext(AuthContext)
+    const {user} = useContext(AuthContext)
+
+    // console.log(user)
+
 
     useEffect(() => {
         TodoService.getTodos().then(data => {
             setTodos(data.todos)
         })
     },[todos])
+
+    useEffect(() => {
+        ProjectService.getProjects().then(data => {
+            setProjects(data.projects)
+        })
+    },[projects])
 
     function onSubmit(e){
         e.preventDefault()
@@ -85,7 +98,9 @@ function Todos(props) {
             </select>
             <p>
                 {
-
+                    projects.map(p =>{
+                        return <span>{p.name}</span>
+                    })
                 }
             </p>
             <ul className="list-group">

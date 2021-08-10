@@ -1,15 +1,15 @@
 export default {
-    // getTodos: () => {
-    //     return fetch('/todos')
-    //         .then(response => {
-    //     // passport sends a 401 status if unathenticated
-    //             if (response.status !== 401) {
-    //                 return response.json().then(data => data)
-    //             } else {
-    //                 return { message: { msgBody: 'Unauthorized', msgError: true } }
-    //             }
-    //     })
-    // },
+    getProjects: () => {
+        return fetch('/projects')
+            .then(response => {
+        // passport sends a 401 status if unathenticated
+                if (response.status !== 401) {
+                    return response.json().then(data => data)
+                } else {
+                    return { message: { msgBody: 'Unauthorized', msgError: true } }
+                }
+        })
+    },
     createProject: project => {
         return fetch('/projects/createProject', {
             method: 'POST',
