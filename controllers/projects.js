@@ -15,8 +15,11 @@ module.exports = {
         
             })
     },
+    getTodosByProject: async (req, res) => {
+        console.log(req.body.project)
+        const todos = Todo.find({ project: req.body.project })
+    },
     createProject: async (req, res) => {
-        
         const project = new Project(req.body)
         await project.save(err=>{
             if(err)
@@ -32,6 +35,4 @@ module.exports = {
             }
         })
     },
-
-    
 }
