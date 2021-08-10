@@ -17,7 +17,8 @@ const UserSchema = new mongoose.Schema({
         enum: ['user', 'admin'],
         required: true
     },
-    todos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Todo' }]
+    todos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Todo' }],
+    projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project' }]
 })
 
 UserSchema.pre('save', function (next){

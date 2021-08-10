@@ -1,6 +1,6 @@
 export default {
-    login: async user => {
-        return await fetch('/user/login', {
+    login: user => {
+        return fetch('/user/login', {
             method: 'POST',
             body: JSON.stringify(user),
             headers: {
