@@ -19,17 +19,17 @@ function Todos(props) {
     const authContext = useContext(AuthContext)
 
 
-    // useEffect(() => {
-    //     TodoService.getTodos().then(data => {
-    //         setTodos(data.todos)
-    //     })
-    // },[todos])
-    
     useEffect(() => {
-        ProjectService.getTodosByProject().then(data => {
+        TodoService.getTodos().then(data => {
             setTodos(data.todos)
         })
     },[])
+    
+    // useEffect(() => {
+    //     ProjectService.getTodosByProject().then(data => {
+    //         setTodos(data.todos)
+    //     })
+    // },[])
 
     useEffect(() => {
         ProjectService.getProjects().then(data => {
@@ -53,6 +53,7 @@ function Todos(props) {
             <CreateProject />
             <h4>Sort by project: </h4>
             <select onChange={handleChange}>
+                <option value="all-projects">All Projects</option>
                 {
                     projects.map(p => {
                         return <option value={p._id} key={p._id}>{p.name}</option>

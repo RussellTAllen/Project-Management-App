@@ -13,7 +13,7 @@ function CreateTodo(props) {
 
     function onSubmit(e){
         e.preventDefault()
-        console.log(project)
+        console.log('submit todo to project: '+project)
         TodoService.createTodo(todo, project).then(data => {
             const { message } = data
             resetForm()
@@ -58,7 +58,7 @@ function CreateTodo(props) {
                 <select onChange={selectProject}>
                     {
                         props.projects.map(p => {
-                            return <option value={p._id} key={p._id}>{p._id}</option>
+                            return <option value={p._id} key={p._id}>{p.name}</option>
                         })
                     }
                 </select>

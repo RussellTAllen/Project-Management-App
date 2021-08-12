@@ -32,10 +32,13 @@ module.exports = {
                     if(err)
                         res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
                     else{
-                        console.log('controller todos: '+typeof document.todos[1].project)
-                        console.log('controller todos: '+typeof req.params.id)
-                        const projectTodos = document.todos.filter(todo => String(todo.project) === req.params.id)
-                        res.status(200).json({ todos: projectTodos, authenticated: true })
+                        if (req.params.id !== 'all-projects'){
+                            // const projectTodos = document.todos.filter(todo => String(todo.project) === req.params.id)
+                            document.todos = document.todos.filter(todo => String(todo.project) === req.params.id)
+                        }else{
+                            document.todos = document.todos
+                        }
+                        res.status(200).json({ todos: document.todos, authenticated: true })
                     }
                 })
     },
