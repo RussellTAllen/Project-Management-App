@@ -1,19 +1,20 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { AuthContext } from '../context/AuthContext'
 import Message from './Message'
 import TodoService from '../services/TodoService'
 
-
-
-function CreateTodo() {    
-    const [todo, setTodo] = useState({ item: '' })
+function CreateTodo(props) {    
+    const [todo, setTodo] = useState({ item: ''})
     const [todos, setTodos] = useState([])
+    const [project, setProject] = useState(props.projects[0])
     const [message, setMessage] = useState(null)
     const authContext = useContext(AuthContext)
-    
+
+
     function onSubmit(e){
         e.preventDefault()
-        TodoService.createTodo(todo).then(data => {
+        console.log(project)
+        TodoService.createTodo(todo, project).then(data => {
             const { message } = data
             resetForm()
             if(!message.msgError){
@@ -35,6 +36,10 @@ function CreateTodo() {
         setTodo({ item: e.target.value })
     }
 
+    function selectProject(e){
+        setProject(e.target.value)
+    }
+
     function resetForm(){
         setTodo({ item: '' })
     }
@@ -50,6 +55,13 @@ function CreateTodo() {
                         className="form-control"
                         placeholder="Enter Todo"
                 />
+                <select onChange={selectProject}>
+                    {
+                        props.projects.map(p => {
+                            return <option value={p._id} key={p._id}>{p._id}</option>
+                        })
+                    }
+                </select>
                 <button className="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
             </form>
             { message ? <Message message={message} /> : null }

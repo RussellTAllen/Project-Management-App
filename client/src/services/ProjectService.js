@@ -10,6 +10,20 @@ export default {
                 }
         })
     },
+    getTodosByProject: project => {
+        return fetch('/projects/'+project)
+            .then(response => {
+                if (response.status !== 401) {
+                    return response.json().then(data => {
+                        console.log('data from projectservice: '+data)
+                        console.log(data)
+                        return data
+                    })
+                } else {
+                    return { message: { msgBody: 'Unauthorized', msgError: true } }
+                }
+            })
+    },
     createProject: project => {
         return fetch('/projects/createProject', {
             method: 'POST',

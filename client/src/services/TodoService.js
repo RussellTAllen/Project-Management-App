@@ -10,10 +10,16 @@ export default {
                 }
         })
     },
-    createTodo: todo => {
+    createTodo: (todo, project) => {
+        console.log('todo service: ')
+        console.log(todo, project  )
         return fetch('/todos/addTodo', {
             method: 'POST',
-            body: JSON.stringify(todo),
+            body: JSON.stringify({
+                item: todo.item, 
+                project: project
+            }
+            ),
             headers: {
                 'Content-Type': 'application/json'
             }

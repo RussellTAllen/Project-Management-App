@@ -13,16 +13,23 @@ import Message from './Message'
 function Todos(props) {
     // const [todo, setTodo] = useState({ item: '' })
     const [todos, setTodos] = useState([])
+    // const [project, setProject] = useState([])
     const [projects, setProjects] = useState([])
     const [message, setMessage] = useState(null)
     const authContext = useContext(AuthContext)
 
 
+    // useEffect(() => {
+    //     TodoService.getTodos().then(data => {
+    //         setTodos(data.todos)
+    //     })
+    // },[todos])
+    
     useEffect(() => {
-        TodoService.getTodos().then(data => {
+        ProjectService.getTodosByProject().then(data => {
             setTodos(data.todos)
         })
-    },[todos])
+    },[])
 
     useEffect(() => {
         ProjectService.getProjects().then(data => {
@@ -30,15 +37,25 @@ function Todos(props) {
         })
     },[projects])
 
+    // console.log(projects)
 
+    function handleChange(e){
+        console.log('handling project change...'+e.target.value)
+        // setProject(e.t)
+        ProjectService.getTodosByProject(e.target.value).then(data => {
+            console.log(data)
+            setTodos(data.todos)
+        })
+    }
+   
     return (
         <div>
             <CreateProject />
             <h4>Sort by project: </h4>
-            <select>
+            <select onChange={handleChange}>
                 {
                     projects.map(p => {
-                        return <option value={p.name} key={p._id}>{p.name}</option>
+                        return <option value={p._id} key={p._id}>{p.name}</option>
                     })
                 }
             </select>
@@ -57,7 +74,7 @@ function Todos(props) {
                 }
             </ul>
             <br />
-            <CreateTodo />
+            <CreateTodo projects={projects} />
 
        </div>
     )
