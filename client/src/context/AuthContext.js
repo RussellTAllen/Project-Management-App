@@ -20,10 +20,12 @@ export default ({ children }) => {
     return (
         <div>
             {/* If app is loaded, we are passing the user and isAuthenticated values as a global state */}
-            {!isLoaded ? <h1>Loading...</h1> : 
+            {
+            !isLoaded ? <h1>Loading...</h1> : 
             <AuthContext.Provider value={{ user, setUser, isAuthenticated, setIsAuthenticated }}>
                 { children }    
-            </AuthContext.Provider>}
+            </AuthContext.Provider>
+            }
         </div>
     )
 }

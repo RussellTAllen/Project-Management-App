@@ -18,8 +18,7 @@ export default {
             body: JSON.stringify({
                 item: todo.item, 
                 project: project
-            }
-            ),
+            }),
             headers: {
                 'Content-Type': 'application/json'
             }

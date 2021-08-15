@@ -1,6 +1,6 @@
 import React from 'react'
 import TodoService from '../services/TodoService'
-import Message from './Message'
+// import Message from './Message'
 
 function TodoItem(props) {
     const todoID = props.todo._id

@@ -6,7 +6,7 @@ import { AuthContext } from '../context/AuthContext'
 function Navbar(props) {
     const { isAuthenticated, setIsAuthenticated, user, setUser} = useContext(AuthContext)
 
-    function onClickLogoutHandler(){
+    function handleLogout(){
         AuthService.logout().then(data => {
             if(data.success){
                 setUser(data.user)
@@ -52,21 +52,17 @@ function Navbar(props) {
                     </li>
                 </Link>
                 {
-                    user.role === 'admin' ?
+                user.role === 'admin' ?
                     <Link to="/admin">
                         <li className="nav-item nav-link">
                             Admin
                         </li>
-                    </Link> : null
+                    </Link> 
+                    : null
                 }
-                {/* <Link to="/user/logout">
-                    <li className="nav-item nav-link">
-                        Logout
-                    </li>
-                </Link> */}
                 <button type="button" 
                         className="nav-item nav-link btn btn-link" 
-                        onClick={onClickLogoutHandler}>
+                        onClick={handleLogout}>
                     Logout
                 </button>
             </>

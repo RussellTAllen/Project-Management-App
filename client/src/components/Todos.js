@@ -11,9 +11,10 @@ import Message from './Message'
 
 
 function Todos(props) {
-    // const [todo, setTodo] = useState({ item: '' })
+    const [todo, setTodo] = useState({ item: '' })
     const [todos, setTodos] = useState([])
-    // const [project, setProject] = useState([])
+    // const [selectedProject, setSelectedProject] = useState({})
+    const [project, setProject] = useState({})
     const [projects, setProjects] = useState([])
     const [message, setMessage] = useState(null)
     const authContext = useContext(AuthContext)
@@ -34,25 +35,102 @@ function Todos(props) {
     useEffect(() => {
         ProjectService.getProjects().then(data => {
             setProjects(data.projects)
+            // setProject(data.projects[0])
         })
     },[projects])
 
-    // console.log(projects)
 
-    function handleChange(e){
+    // useEffect(() => {
+    //     setProject(projects[0])
+    // }, [])
+
+    // useEffect(() => {
+    //     ProjectService.getProjects().then(data => {
+    //         setSelectedProject(data.projects[0])
+    //     })
+    // },[])
+
+    function handleSortProjectChange(e){
         console.log('handling project change...'+e.target.value)
         // setProject(e.t)
+
+        setProject(e.target.value)
+
         ProjectService.getTodosByProject(e.target.value).then(data => {
             console.log(data)
             setTodos(data.todos)
         })
     }
+
+
+    function handleTodoChange(todo){
+        console.log(todo)
+        setTodo(todo)
+    }
+
+    function handleProjectChange(project){
+        console.log(project)
+        setProject(project)
+    }
+
+    function handleTodoSubmit(todo, project){
+        console.log(todo)
+        console.log(project)
+        TodoService.createTodo(todo, project).then(data => {
+            const { message } = data
+            resetForm()
+            if(!message.msgError){
+                ProjectService.getTodosByProject(project._id).then(data =>{
+                    console.log(data)
+                    setTodos(data.todos)
+                    setMessage(message)
+                })
+            }else if(message.msgBody === 'Unauthorized'){
+                setMessage(message)
+                authContext.setUser({ username: '', role: '' })
+                authContext.setIsAuthenticated(false)
+            }else{
+                setMessage(message)
+            }
+        })
+    }
+
+    function handleProjectSubmit(project){
+        console.log('project: '+project)
+        ProjectService.createProject(project).then(data => {
+            const { message } = data
+            console.log('data from handleProject submission: ')
+            console.log(data)
+            
+            if(!message.msgError){
+                console.log('Created new project!')
+                resetForm()
+            }else{
+                setMessage(message)
+            }
+        })
+        resetForm()
+    }
+
+    // function handleSelectProject(project){
+    //     console.log(project)
+    //     setSelectedProject(project)
+    // }
+
+    function resetForm(){
+        setProject({ name: '' })
+    }
    
     return (
         <div>
-            <CreateProject />
+            <CreateProject 
+                project={project} 
+                onProjectChange={handleProjectChange} 
+                onProjectSubmit={handleProjectSubmit} 
+            />
+
             <h4>Sort by project: </h4>
-            <select onChange={handleChange}>
+            <select onChange={handleSortProjectChange}>
                 <option value="all-projects">All Projects</option>
                 {
                     projects.map(p => {
@@ -60,13 +138,16 @@ function Todos(props) {
                     })
                 }
             </select>
-            <p>
+
+            <div>
                 {
                     projects.map(p =>{
-                        return <span key={p._id}>{p.name}</span>
+                        return <p key={p._id}>Project: {p.name}</p>
                     })
                 }
-            </p>
+            </div>
+
+            <h3>Todos for <em>{project?.name}</em></h3>
             <ul className="list-group">
                 {   
                     todos?.map(todo => {
@@ -74,8 +155,20 @@ function Todos(props) {
                     })
                 }
             </ul>
+
             <br />
-            <CreateTodo projects={projects} />
+           
+            {
+                projects.length > 0 ?
+                    <CreateTodo 
+                            todo={todo} 
+                            project={project}
+                            onTodoChange={handleTodoChange} 
+                            onTodoSubmit={handleTodoSubmit} 
+                            // onSelectProject={handleSelectProject} 
+                    />
+                    : <h3>To Create A Todo, First Create A Project</h3>
+            }
 
        </div>
     )

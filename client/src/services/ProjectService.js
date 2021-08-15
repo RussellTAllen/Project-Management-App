@@ -25,6 +25,7 @@ export default {
             })
     },
     createProject: project => {
+        console.log(project)
         return fetch('/projects/createProject', {
             method: 'POST',
             body: JSON.stringify(project),
