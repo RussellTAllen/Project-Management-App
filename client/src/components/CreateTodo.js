@@ -58,25 +58,30 @@ function CreateTodo(props) {
 
     return (
         <>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="todo">Enter Todo</label>
-                <input type="text" 
-                        name="todo" 
-                        value={props.todo.item} 
-                        onChange={handleChange}
-                        className="form-control"
-                        placeholder="Enter Todo"
-                />
-                {/* <select onChange={selectProject}>
-                    {
-                        props.projects.map(p => {
-                            return <option value={p._id} key={p._id} name={p.name}>{p.name}</option>
-                        })
-                    }
-                </select> */}
-                <button className="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
-            </form>
-            { message ? <Message message={message} /> : null }
+            {
+                props.project !== 'all-projects' ?
+            
+                <form onSubmit={handleSubmit}>
+                    <label htmlFor="todo">Enter Todo</label>
+                    <input type="text" 
+                            name="todo" 
+                            value={props.todo.item} 
+                            onChange={handleChange}
+                            className="form-control"
+                            placeholder="Enter Todo"
+                    />
+                    {/* <select onChange={selectProject}>
+                        {
+                            props.projects.map(p => {
+                                return <option value={p._id} key={p._id} name={p.name}>{p.name}</option>
+                            })
+                        }
+                    </select> */}
+                    <button className="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+                </form>
+                // { message ? <Message message={message} /> : null }
+                : <h4>You must select a project to add a todo item</h4>
+            }       
         </>
     )
 }

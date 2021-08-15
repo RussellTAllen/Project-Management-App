@@ -5,6 +5,7 @@ import TodoService from '../services/TodoService'
 import ProjectService from '../services/ProjectService'
 import { AuthContext } from '../context/AuthContext'
 import CreateTodo from './CreateTodo'
+import SortProject from './SortProject'
 import Message from './Message'
 
 // let user = user
@@ -50,16 +51,21 @@ function Todos(props) {
     //     })
     // },[])
 
-    function handleSortProjectChange(e){
-        console.log('handling project change...'+e.target.value)
-        // setProject(e.t)
+    function handleSortProjectChange(project){
 
-        setProject(e.target.value)
-
-        ProjectService.getTodosByProject(e.target.value).then(data => {
-            console.log(data)
+        console.log(project)
+        setProject(project)
+        ProjectService.getTodosByProject(project).then(data => {
             setTodos(data.todos)
         })
+
+        // LIFTING STATE UP
+        // console.log('handling project change...'+e.target.value)
+        // setProject(e.target.value)
+        // ProjectService.getTodosByProject(e.target.value).then(data => {
+        //     console.log(data)
+        //     setTodos(data.todos)
+        // })
     }
 
 
@@ -78,12 +84,13 @@ function Todos(props) {
         console.log(project)
         TodoService.createTodo(todo, project).then(data => {
             const { message } = data
-            resetForm()
             if(!message.msgError){
-                ProjectService.getTodosByProject(project._id).then(data =>{
+                ProjectService.getTodosByProject(project).then(data =>{
                     console.log(data)
                     setTodos(data.todos)
                     setMessage(message)
+                    resetTodoForm()
+
                 })
             }else if(message.msgBody === 'Unauthorized'){
                 setMessage(message)
@@ -104,12 +111,11 @@ function Todos(props) {
             
             if(!message.msgError){
                 console.log('Created new project!')
-                resetForm()
+                resetProjectForm()
             }else{
                 setMessage(message)
             }
         })
-        resetForm()
     }
 
     // function handleSelectProject(project){
@@ -117,7 +123,11 @@ function Todos(props) {
     //     setSelectedProject(project)
     // }
 
-    function resetForm(){
+    function resetTodoForm(){
+        setTodo({ item: '' })
+    }
+
+    function resetProjectForm(){
         setProject({ name: '' })
     }
    
@@ -128,8 +138,21 @@ function Todos(props) {
                 onProjectChange={handleProjectChange} 
                 onProjectSubmit={handleProjectSubmit} 
             />
+            <SortProject projects={projects} onProjectSort={handleSortProjectChange} />
+            {
+                projects.length > 0 ?
+                    <CreateTodo 
+                            todo={todo} 
+                            project={project}
+                            onTodoChange={handleTodoChange} 
+                            onTodoSubmit={handleTodoSubmit} 
+                            // onSelectProject={handleSelectProject} 
+                    />
+                    : <h3>To Create A Todo, First Create A Project</h3>
+            }
 
-            <h4>Sort by project: </h4>
+            {/* MOVE TO SortProject COMPONENT */}
+            {/* <h4>Sort by project: </h4>
             <select onChange={handleSortProjectChange}>
                 <option value="all-projects">All Projects</option>
                 {
@@ -137,7 +160,7 @@ function Todos(props) {
                         return <option value={p._id} key={p._id}>{p.name}</option>
                     })
                 }
-            </select>
+            </select> */}
 
             <div>
                 {
@@ -155,20 +178,6 @@ function Todos(props) {
                     })
                 }
             </ul>
-
-            <br />
-           
-            {
-                projects.length > 0 ?
-                    <CreateTodo 
-                            todo={todo} 
-                            project={project}
-                            onTodoChange={handleTodoChange} 
-                            onTodoSubmit={handleTodoSubmit} 
-                            // onSelectProject={handleSelectProject} 
-                    />
-                    : <h3>To Create A Todo, First Create A Project</h3>
-            }
 
        </div>
     )

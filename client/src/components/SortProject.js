@@ -1,13 +1,18 @@
 import React from 'react'
 
-function SortProject() {
+function SortProject(props) {
+    function handleChange(e){
+        console.log(e.target.value)
+        props.onProjectSort(e.target.value)
+    }
+
     return (
         <div>
             <h4>Sort by project: </h4>
-            <select onChange={handleSortProjectChange}>
+            <select onChange={handleChange}>
                 <option value="all-projects">All Projects</option>
                 {
-                    projects.map(p => {
+                    props.projects.map(p => {
                         return <option value={p._id} key={p._id}>{p.name}</option>
                     })
                 }
