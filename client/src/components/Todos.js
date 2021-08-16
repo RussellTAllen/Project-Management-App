@@ -9,17 +9,28 @@ import SortProject from './SortProject'
 import Message from './Message'
 
 // let user = user
+export const MessageContext = React.createContext({ message: null, setMessage: () => {} });
 
+const useProjects = () => {
+    const [projects, setProjects] = useState([])
+
+    useEffect(() => {
+        ProjectService.getProjects().then(data => {
+            setProjects(data.projects)
+            // setProject(data.projects[0])
+        })
+    }, [])
+
+    return projects
+}
 
 function Todos(props) {
     const [todo, setTodo] = useState({ item: '' })
     const [todos, setTodos] = useState([])
-    // const [selectedProject, setSelectedProject] = useState({})
-    const [createProject, setCreateProject] = useState({ name: '' })
     const [project, setProject] = useState('all-projects')
     const [projectName, setProjectName] = useState('All Projects')
-    const [projects, setProjects] = useState([])
     const [message, setMessage] = useState(null)
+    const projects = useProjects()
     const authContext = useContext(AuthContext)
 
     useEffect(() => {
@@ -27,13 +38,6 @@ function Todos(props) {
             setTodos(data.todos)
         })
     },[])
-
-    useEffect(() => {
-        ProjectService.getProjects().then(data => {
-            setProjects(data.projects)
-            // setProject(data.projects[0])
-        })
-    },[projects])
 
     function handleSortProjectChange(project, projectName){
         console.log(project)
@@ -48,11 +52,6 @@ function Todos(props) {
     function handleTodoChange(todo){
         console.log(todo)
         setTodo(todo)
-    }
-
-    function handleProjectCreateChange(createProject){
-        console.log(createProject)
-        setCreateProject(createProject)
     }
 
     function handleTodoSubmit(todo, project){
@@ -77,31 +76,9 @@ function Todos(props) {
         })
     }
 
-    function handleProjectCreateSubmit(createProject){
-        console.log('project: '+createProject)
-        ProjectService.createProject(createProject).then(data => {
-            const { message } = data
-            console.log('data from handleProject submission: ')
-            console.log(data)
-            
-            if(!message.msgError){
-                console.log('Created new project!')
-                resetProjectForm()
-            }else{
-                setMessage(message)
-            }
-        })
-    }
-
     function resetTodoForm(){
         setTodo({ item: '' })
     }
-
-    function resetProjectForm(){
-        console.log('trying to reset project form...')
-        setCreateProject({ 'name': ''})
-    }
-
 
     function refreshTodoState(){
         ProjectService.getTodosByProject(project).then(data => {
@@ -110,12 +87,9 @@ function Todos(props) {
     }
    
     return (
+        <MessageContext.Provider value={{ message, setMessage }}>
         <div>
-            <CreateProject 
-                createProject={createProject} 
-                onProjectCreateChange={handleProjectCreateChange} 
-                onProjectCreateSubmit={handleProjectCreateSubmit} 
-            />
+            <CreateProject />
             <SortProject projects={projects} onProjectSort={handleSortProjectChange} />
             {
                 projects.length > 0 ?
@@ -144,7 +118,8 @@ function Todos(props) {
                     })
                 }
             </ul>
-       </div>
+        </div>
+        </MessageContext.Provider>
     )
 }
 
