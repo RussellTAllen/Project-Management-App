@@ -22,13 +22,13 @@ function CreateProject(props) {
         //         setMessage(message)
         //     }
         // })
-        console.log('target value: ' + props.project)
-        props.onProjectSubmit(props.project)
+        console.log('target value: ' + props.createProject)
+        props.onProjectCreateSubmit(props.createProject)
     }
     function handleChange(e){
         // lifting state up to Todos parent
         // setProject({ name: e.target.value })
-        props.onProjectChange({ name: e.target.value })
+        props.onProjectCreateChange({ name: e.target.value })
     }
 
     // function resetForm(){
@@ -42,7 +42,7 @@ function CreateProject(props) {
                 <label htmlFor="project">Create a new project</label>
                 <input type="text"
                         name="project"
-                        value={props.project.name}
+                        value={props.createProject.name}
                         onChange={handleChange}
                         className="form-control"
                         placeholder="Enter new project name" />

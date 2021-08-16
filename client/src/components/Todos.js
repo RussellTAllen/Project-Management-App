@@ -15,23 +15,18 @@ function Todos(props) {
     const [todo, setTodo] = useState({ item: '' })
     const [todos, setTodos] = useState([])
     // const [selectedProject, setSelectedProject] = useState({})
-    const [project, setProject] = useState({})
+    const [createProject, setCreateProject] = useState('')
+    const [project, setProject] = useState('all-projects')
+    const [projectName, setProjectName] = useState('All Projects')
     const [projects, setProjects] = useState([])
     const [message, setMessage] = useState(null)
     const authContext = useContext(AuthContext)
-
 
     useEffect(() => {
         TodoService.getTodos().then(data => {
             setTodos(data.todos)
         })
     },[])
-    
-    // useEffect(() => {
-    //     ProjectService.getTodosByProject().then(data => {
-    //         setTodos(data.todos)
-    //     })
-    // },[])
 
     useEffect(() => {
         ProjectService.getProjects().then(data => {
@@ -40,43 +35,24 @@ function Todos(props) {
         })
     },[projects])
 
-
-    // useEffect(() => {
-    //     setProject(projects[0])
-    // }, [])
-
-    // useEffect(() => {
-    //     ProjectService.getProjects().then(data => {
-    //         setSelectedProject(data.projects[0])
-    //     })
-    // },[])
-
-    function handleSortProjectChange(project){
-
+    function handleSortProjectChange(project, projectName){
         console.log(project)
         setProject(project)
+        setProjectName(projectName)
         ProjectService.getTodosByProject(project).then(data => {
             setTodos(data.todos)
         })
-
-        // LIFTING STATE UP
-        // console.log('handling project change...'+e.target.value)
-        // setProject(e.target.value)
-        // ProjectService.getTodosByProject(e.target.value).then(data => {
-        //     console.log(data)
-        //     setTodos(data.todos)
-        // })
     }
-
 
     function handleTodoChange(todo){
         console.log(todo)
         setTodo(todo)
     }
 
-    function handleProjectChange(project){
+    function handleProjectCreateChange(createProject){
         console.log(project)
-        setProject(project)
+        console.log(createProject)
+        setCreateProject(createProject)
     }
 
     function handleTodoSubmit(todo, project){
@@ -102,9 +78,9 @@ function Todos(props) {
         })
     }
 
-    function handleProjectSubmit(project){
-        console.log('project: '+project)
-        ProjectService.createProject(project).then(data => {
+    function handleProjectCreateSubmit(createProject){
+        console.log('project: '+createProject)
+        ProjectService.createProject(createProject).then(data => {
             const { message } = data
             console.log('data from handleProject submission: ')
             console.log(data)
@@ -118,25 +94,20 @@ function Todos(props) {
         })
     }
 
-    // function handleSelectProject(project){
-    //     console.log(project)
-    //     setSelectedProject(project)
-    // }
-
     function resetTodoForm(){
         setTodo({ item: '' })
     }
 
     function resetProjectForm(){
-        setProject({ name: '' })
+        setCreateProject('')
     }
    
     return (
         <div>
             <CreateProject 
-                project={project} 
-                onProjectChange={handleProjectChange} 
-                onProjectSubmit={handleProjectSubmit} 
+                createProject={createProject} 
+                onProjectCreateChange={handleProjectCreateChange} 
+                onProjectCreateSubmit={handleProjectCreateSubmit} 
             />
             <SortProject projects={projects} onProjectSort={handleSortProjectChange} />
             {
@@ -146,21 +117,9 @@ function Todos(props) {
                             project={project}
                             onTodoChange={handleTodoChange} 
                             onTodoSubmit={handleTodoSubmit} 
-                            // onSelectProject={handleSelectProject} 
                     />
                     : <h3>To Create A Todo, First Create A Project</h3>
             }
-
-            {/* MOVE TO SortProject COMPONENT */}
-            {/* <h4>Sort by project: </h4>
-            <select onChange={handleSortProjectChange}>
-                <option value="all-projects">All Projects</option>
-                {
-                    projects.map(p => {
-                        return <option value={p._id} key={p._id}>{p.name}</option>
-                    })
-                }
-            </select> */}
 
             <div>
                 {
@@ -170,7 +129,7 @@ function Todos(props) {
                 }
             </div>
 
-            <h3>Todos for <em>{project?.name}</em></h3>
+            <h3>Todos for <em>{projectName}</em></h3>
             <ul className="list-group">
                 {   
                     todos?.map(todo => {
