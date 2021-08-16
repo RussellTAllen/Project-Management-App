@@ -15,7 +15,7 @@ function Todos(props) {
     const [todo, setTodo] = useState({ item: '' })
     const [todos, setTodos] = useState([])
     // const [selectedProject, setSelectedProject] = useState({})
-    const [createProject, setCreateProject] = useState('')
+    const [createProject, setCreateProject] = useState({ name: '' })
     const [project, setProject] = useState('all-projects')
     const [projectName, setProjectName] = useState('All Projects')
     const [projects, setProjects] = useState([])
