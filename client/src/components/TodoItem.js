@@ -15,6 +15,8 @@ function TodoItem(props) {
         //         console.log('error will robinson!')
         //         props.history.push('/')
         // })
+
+        props.onRemove()
     }
 
     return (

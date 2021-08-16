@@ -39,6 +39,7 @@ function Todos(props) {
         console.log(project)
         setProject(project)
         setProjectName(projectName)
+        // refreshTodoState()
         ProjectService.getTodosByProject(project).then(data => {
             setTodos(data.todos)
         })
@@ -50,7 +51,6 @@ function Todos(props) {
     }
 
     function handleProjectCreateChange(createProject){
-        console.log(project)
         console.log(createProject)
         setCreateProject(createProject)
     }
@@ -66,7 +66,6 @@ function Todos(props) {
                     setTodos(data.todos)
                     setMessage(message)
                     resetTodoForm()
-
                 })
             }else if(message.msgBody === 'Unauthorized'){
                 setMessage(message)
@@ -99,7 +98,15 @@ function Todos(props) {
     }
 
     function resetProjectForm(){
-        setCreateProject('')
+        console.log('trying to reset project form...')
+        setCreateProject({ 'name': ''})
+    }
+
+
+    function refreshTodoState(){
+        ProjectService.getTodosByProject(project).then(data => {
+            setTodos(data.todos)
+        })
     }
    
     return (
@@ -121,9 +128,9 @@ function Todos(props) {
                     : <h3>To Create A Todo, First Create A Project</h3>
             }
 
-            <div>
+            <div style={{'background': 'cyan'}}>
                 {
-                    projects.map(p =>{
+                    projects?.map(p =>{
                         return <p key={p._id}>Project: {p.name}</p>
                     })
                 }
@@ -133,11 +140,10 @@ function Todos(props) {
             <ul className="list-group">
                 {   
                     todos?.map(todo => {
-                        return <TodoItem key={todo._id} todo={todo} />
+                        return <TodoItem key={todo._id} todo={todo} onRemove={refreshTodoState} />
                     })
                 }
             </ul>
-
        </div>
     )
 }

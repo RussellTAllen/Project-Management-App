@@ -1,40 +1,18 @@
 import React, { useState } from 'react'
-import ProjectService from '../services/ProjectService'
-import { AuthContext } from '../context/AuthContext'
 import Message from './Message'
 
 
 function CreateProject(props) {
-    // const [project, setProject] = useState({ name: '' })
-    // const [message, setMessage] = useState(null)
-
 
     function handleSubmit(e){
         e.preventDefault()
-        // Lifting state up
-        // ProjectService.createProject(project).then(data => {
-        //     const { message } = data
-            
-        //     if(!message.msgError){
-        //         console.log('Created new project!')
-        //         resetForm()
-        //     }else{
-        //         setMessage(message)
-        //     }
-        // })
-        console.log('target value: ' + props.createProject)
+        
         props.onProjectCreateSubmit(props.createProject)
     }
     function handleChange(e){
-        // lifting state up to Todos parent
-        // setProject({ name: e.target.value })
+        console.log(e.target.value)
         props.onProjectCreateChange({ name: e.target.value })
     }
-
-    // function resetForm(){
-    //     setProject({ name: '' })
-    // }
-
 
     return (
         <>
