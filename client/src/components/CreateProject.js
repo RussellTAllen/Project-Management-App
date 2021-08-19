@@ -3,6 +3,7 @@ import Message from './Message'
 
 
 function CreateProject(props) {
+    console.log(props.onCreate)
 
     function handleSubmit(e){
         e.preventDefault()
@@ -20,7 +21,7 @@ function CreateProject(props) {
                 <label htmlFor="project">Create a new project</label>
                 <input type="text"
                         name="project"
-                        value={props.createProject.name}
+                        value=''
                         onChange={handleChange}
                         className="form-control"
                         placeholder="Enter new project name" />

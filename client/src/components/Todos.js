@@ -8,19 +8,33 @@ import CreateTodo from './CreateTodo'
 import SortProject from './SortProject'
 import Message from './Message'
 
-// let user = user
+export const MessageContext = React.createContext({ message: null, setMessage: () => {} })
 
+const useProjects = () => {
+    console.log('useProjects runs... ')
+    const [projects, setProjects] = useState([])
+
+    useEffect(() => {
+        ProjectService.getProjects().then(data => {
+            setProjects(data.projects)
+        })
+    }, [])
+    return projects
+}
 
 function Todos(props) {
+    
     const [todo, setTodo] = useState({ item: '' })
     const [todos, setTodos] = useState([])
-    // const [selectedProject, setSelectedProject] = useState({})
-    const [createProject, setCreateProject] = useState({ name: '' })
+    // BEFORE IGHOST EDIT
+    // const [createProject, setCreateProject] = useState({ name: '' })
+    // const [projects, setProjects] = useState([])
     const [project, setProject] = useState('all-projects')
     const [projectName, setProjectName] = useState('All Projects')
-    const [projects, setProjects] = useState([])
+    const projects = useProjects()
     const [message, setMessage] = useState(null)
     const authContext = useContext(AuthContext)
+
 
     useEffect(() => {
         TodoService.getTodos().then(data => {
@@ -28,12 +42,14 @@ function Todos(props) {
         })
     },[])
 
-    useEffect(() => {
-        ProjectService.getProjects().then(data => {
-            setProjects(data.projects)
-            // setProject(data.projects[0])
-        })
-    },[projects])
+    // BEFORE IGHOST EDIT
+    // useEffect(() => {
+    //     console.log('projects ...')
+    //     ProjectService.getProjects().then(data => {
+    //         setProjects(data.projects)
+    //         // setProject(data.projects[0])
+    //     })
+    // },[])
 
     function handleSortProjectChange(project, projectName){
         console.log(project)
@@ -50,10 +66,10 @@ function Todos(props) {
         setTodo(todo)
     }
 
-    function handleProjectCreateChange(createProject){
-        console.log(createProject)
-        setCreateProject(createProject)
-    }
+    // function handleProjectCreateChange(createProject){
+    //     console.log(createProject)
+    //     setCreateProject(createProject)
+    // }
 
     function handleTodoSubmit(todo, project){
         console.log(todo)
@@ -77,30 +93,32 @@ function Todos(props) {
         })
     }
 
-    function handleProjectCreateSubmit(createProject){
-        console.log('project: '+createProject)
-        ProjectService.createProject(createProject).then(data => {
-            const { message } = data
-            console.log('data from handleProject submission: ')
-            console.log(data)
+    // BEFORE IGHOST EDIT
+    // function handleProjectCreateSubmit(createProject){
+    //     console.log('project: '+createProject)
+    //     ProjectService.createProject(createProject).then(data => {
+    //         const { message } = data
+    //         console.log('data from handleProject submission: ')
+    //         console.log(data)
             
-            if(!message.msgError){
-                console.log('Created new project!')
-                resetProjectForm()
-            }else{
-                setMessage(message)
-            }
-        })
-    }
+    //         if(!message.msgError){
+    //             console.log('Created new project!')
+    //             resetProjectForm()
+    //         }else{
+    //             setMessage(message)
+    //         }
+    //     })
+    // }
 
     function resetTodoForm(){
         setTodo({ item: '' })
     }
 
-    function resetProjectForm(){
-        console.log('trying to reset project form...')
-        setCreateProject({ 'name': ''})
-    }
+    // BEFORE IGHOST EDIT
+    // function resetProjectForm(){
+    //     console.log('trying to reset project form...')
+    //     setCreateProject({ 'name': ''})
+    // }
 
 
     function refreshTodoState(){
@@ -108,15 +126,31 @@ function Todos(props) {
             setTodos(data.todos)
         })
     }
+
+    // function updateProjects(){
+    //     console.log('updating projects...')
+    //     useEffect(() => {
+    //         console.log('projects ...')
+    //         ProjectService.getProjects().then(data => {
+    //             setProjects(data.projects)
+    //             // setProject(data.projects[0])
+    //         })
+    //     },[])
+    // }
    
     return (
+        <MessageContext.Provider value={{ message, setMessage }}>
         <div>
-            <CreateProject 
+            {/* <CreateProject 
                 createProject={createProject} 
                 onProjectCreateChange={handleProjectCreateChange} 
                 onProjectCreateSubmit={handleProjectCreateSubmit} 
-            />
+            /> */}
+            
+            <CreateProject onCreate={useProjects} />
+            <hr />
             <SortProject projects={projects} onProjectSort={handleSortProjectChange} />
+            <hr />
             {
                 projects.length > 0 ?
                     <CreateTodo 
@@ -127,6 +161,7 @@ function Todos(props) {
                     />
                     : <h3>To Create A Todo, First Create A Project</h3>
             }
+            <hr />
 
             <div style={{'background': 'cyan'}}>
                 {
@@ -135,6 +170,7 @@ function Todos(props) {
                     })
                 }
             </div>
+            <hr />
 
             <h3>Todos for <em>{projectName}</em></h3>
             <ul className="list-group">
@@ -145,6 +181,7 @@ function Todos(props) {
                 }
             </ul>
        </div>
+       </MessageContext.Provider>
     )
 }
 
