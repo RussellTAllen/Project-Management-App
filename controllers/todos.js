@@ -17,52 +17,58 @@ module.exports = {
     addTodo: async (req, res) => {
         console.log('req.body: ')
         console.log(req.body)
-        // await Todo.create({
-            //     item: req.body.item,
-            //     project: req.body.project
-            // })
+        const todo = await Todo.create({
+                item: req.body.item,
+                project: req.body.project,
+                priority: req.body.priority,
+                created: new Date(),
+                completed: false
+            })
 
-        const todo = new Todo({
-            item: req.body.item,
-            project: req.body.project
-        })
+        // const todo = new Todo({
+        //     item: req.body.item,
+        //     project: req.body.project,
+        //     // priority: req.body.priority,
+        //     // created: new Date(),
+        //     // completed: false
+        // })
 
-        await todo.save(function(error) {
-            if (!error) {
-                Todo.find({})
-                    .populate('project')
-                    .exec(function(error, todos) {
-                        console.log(JSON.stringify(todos, null, "\t"))
-                    })
-                req.user.todos.push(todo)
-                req.user.save(err=>{
-                        if (err)
-                            res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
-                        else
-                            res.status(200).json({ message: { msgBody: 'Todo created!', msgError: false }})
-                })
-            }
-        });
+        // await todo.save(function(error) {
+        //     if (!error) {
+        //         Todo.find({})
+        //             .populate('project')
+        //             .exec(function(error, todos) {
+        //                 console.log(JSON.stringify(todos, null, "\t"))
+        //             })
+        //         req.user.todos.push(todo)
+        //         req.user.save(err=>{
+        //                 if (err)
+        //                     res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
+        //                 else
+        //                     res.status(200).json({ message: { msgBody: 'Todo created!', msgError: false }})
+        //         })
+        //     }error => console.log(error)
+        // });
 // 
         // await req.user.todos.push(todo)
         // await req.user.save()
             
             
         // const todo = new Todo(req.body)
-        // console.log(todo)
-        // await todo.save(err=>{
-        //     if(err)
-        //         res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
-        //     else{
-        //         req.user.todos.push(todo)
-        //         req.user.save(err=>{
-        //             if (err)
-        //                 res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
-        //             else
-        //                 res.status(200).json({ message: { msgBody: 'Todo created!', msgError: false }})
-        //         })
-        //     }
-        // })
+        console.log('line 55:'+todo)
+        await todo.save(err=>{
+            if(err)
+                res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
+            else{
+                req.user.todos.push(todo)
+                req.user.save(err=>{
+                    if (err)
+                        res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
+                    else
+                        res.status(200).json({ message: { msgBody: 'Todo created!', msgError: false }})
+                })
+            }
+        })
     },
     removeTodo: async (req, res) => {
         console.log('controller removeTodo running...')

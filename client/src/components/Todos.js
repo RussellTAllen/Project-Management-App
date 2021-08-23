@@ -17,6 +17,7 @@ function Todos(props) {
     // const [selectedProject, setSelectedProject] = useState({})
     const [createProject, setCreateProject] = useState({ name: '' })
     const [project, setProject] = useState('all-projects')
+    const [priority, setPriority] = useState('Low')
     const [projectName, setProjectName] = useState('All Projects')
     const [projects, setProjects] = useState([])
     const [message, setMessage] = useState(null)
@@ -31,9 +32,8 @@ function Todos(props) {
     useEffect(() => {
         ProjectService.getProjects().then(data => {
             setProjects(data.projects)
-            // setProject(data.projects[0])
         })
-    },[projects])
+    },[])
 
     function handleSortProjectChange(project, projectName){
         console.log(project)
@@ -55,14 +55,16 @@ function Todos(props) {
         setCreateProject(createProject)
     }
 
-    function handleTodoSubmit(todo, project){
-        console.log(todo)
-        console.log(project)
-        TodoService.createTodo(todo, project).then(data => {
+    function handlePriorityChange(priority){
+        console.log(priority)
+        setPriority(priority)
+    }
+
+    function handleTodoSubmit(todo, project, priority){
+        TodoService.createTodo(todo, project, priority).then(data => {
             const { message } = data
             if(!message.msgError){
                 ProjectService.getTodosByProject(project).then(data =>{
-                    console.log(data)
                     setTodos(data.todos)
                     setMessage(message)
                     resetTodoForm()
@@ -85,12 +87,17 @@ function Todos(props) {
             console.log(data)
             
             if(!message.msgError){
+                ProjectService.getProjects().then(data => {
+                    console.log(data)
+                    setProjects(data.projects)
+                })
                 console.log('Created new project!')
                 resetProjectForm()
             }else{
                 setMessage(message)
             }
         })
+  
     }
 
     function resetTodoForm(){
@@ -98,7 +105,6 @@ function Todos(props) {
     }
 
     function resetProjectForm(){
-        console.log('trying to reset project form...')
         setCreateProject({ 'name': ''})
     }
 
@@ -114,7 +120,7 @@ function Todos(props) {
             <CreateProject 
                 createProject={createProject} 
                 onProjectCreateChange={handleProjectCreateChange} 
-                onProjectCreateSubmit={handleProjectCreateSubmit} 
+                onProjectCreateSubmit={handleProjectCreateSubmit}
             />
             <SortProject projects={projects} onProjectSort={handleSortProjectChange} />
             {
@@ -122,8 +128,10 @@ function Todos(props) {
                     <CreateTodo 
                             todo={todo} 
                             project={project}
+                            priority={priority}
                             onTodoChange={handleTodoChange} 
                             onTodoSubmit={handleTodoSubmit} 
+                            onPriorityChange={handlePriorityChange} 
                     />
                     : <h3>To Create A Todo, First Create A Project</h3>
             }
