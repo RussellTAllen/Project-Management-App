@@ -5,14 +5,24 @@ const User = require('../models/User')
 
 module.exports = {
     getTodos: async (req, res) => {
-        User.findById({ _id: req.user._id }).populate('todos').exec((err, document)=>{
-                if(err)
-                    res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
-                else{
-                    res.status(200).json({ todos: document.todos, authenticated: true })
-                }
-        
-            })
+        User.findById({ _id: req.user._id }).populate('todos') 
+                    .populate([
+                    {
+                        path: 'todos',
+                        model: 'Todo',
+                        populate: {
+                            path: 'project',
+                            model: 'Project'
+                        }
+                    }
+                ]).exec((err, document)=>{
+                        if(err)
+                            res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
+                        else{
+                            res.status(200).json({ todos: document.todos, authenticated: true })
+                        }
+                
+                    })
     },
     addTodo: async (req, res) => {
         console.log('req.body: ')

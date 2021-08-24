@@ -6,6 +6,7 @@ function TodoItem(props) {
     const todoID = props.todo._id
 
     console.log(props.todo.project)
+    console.log(props.project)
 
     function handleRemove(e){
         TodoService.removeTodo(todoID)
@@ -40,8 +41,8 @@ function TodoItem(props) {
             </td>
             <td>{date}</td>
             { 
-            props.project === 'All Projects' ?
-                <td>{props.todo.project}</td>
+            props.project === 'all-projects' ?
+                <td>{props.todo.project.name}</td>
                 : null
             }
             <td><button onClick={handleRemove}>Remove</button></td>

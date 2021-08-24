@@ -11,6 +11,7 @@ export default {
         })
     },
     getTodosByProject: project => {
+        console.log(project)
         return fetch('/projects/'+project)
             .then(response => {
                 if (response.status !== 401) {

@@ -44,8 +44,8 @@ function Todos(props) {
         console.log(project)
         setProject(project)
         setProjectName(projectName)
-        // refreshTodoState()
         ProjectService.getTodosByProject(project).then(data => {
+            console.log(data)
             setTodos(data.todos)
         })
     }
@@ -115,12 +115,12 @@ function Todos(props) {
 
 
     function refreshTodoState(){
-        ProjectService.getTodosByProject(project).then(data => {
+        ProjectService.getTodosByProject(project._id).then(data => {
             setTodos(data.todos)
         })
     }
 
-    todos.sort((a,b) => priorities[b.priority] - priorities[a.priority])
+    todos?.sort((a,b) => priorities[b.priority] - priorities[a.priority])
 
     console.log(projectName)
    
@@ -171,7 +171,7 @@ function Todos(props) {
                 <tbody>
                 {   
                     todos?.map(todo => {
-                        return <TodoItem key={todo._id} todo={todo} project={projectName} onRemove={refreshTodoState} />
+                        return <TodoItem key={todo._id} todo={todo} project={project} onRemove={refreshTodoState} />
                     })
                 }
                 </tbody>
