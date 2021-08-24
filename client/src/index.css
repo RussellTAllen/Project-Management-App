@@ -15,3 +15,13 @@ code {
 h1{
   background: hsl(10, 100%, 100%);
 }
+thead{
+  background: rgb(209, 209, 209);
+}
+tbody tr:nth-child(even){
+  background: rgb(212, 255, 255);
+}
+td{
+  padding: 5px 15px;
+  border: 1px dotted black;
+}

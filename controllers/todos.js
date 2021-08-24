@@ -21,7 +21,7 @@ module.exports = {
                 item: req.body.item,
                 project: req.body.project,
                 priority: req.body.priority,
-                created: new Date(),
+                created: Date.now(),
                 completed: false
             })
 

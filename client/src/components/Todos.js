@@ -8,7 +8,12 @@ import CreateTodo from './CreateTodo'
 import SortProject from './SortProject'
 import Message from './Message'
 
-// let user = user
+const priorities = {
+    "Low": 1,
+    "Medium": 2,
+    "High": 3,
+    "URGENT": 4
+}
 
 
 function Todos(props) {
@@ -114,6 +119,10 @@ function Todos(props) {
             setTodos(data.todos)
         })
     }
+
+    todos.sort((a,b) => priorities[b.priority] - priorities[a.priority])
+
+    console.log(projectName)
    
     return (
         <div>
@@ -145,13 +154,28 @@ function Todos(props) {
             </div>
 
             <h3>Todos for <em>{projectName}</em></h3>
-            <ul className="list-group">
+            <table>
+                <thead>
+                    <tr>
+                        <td>Todo Item</td>
+                        <td>Priority</td>
+                        <td>Date Created</td>
+                        {
+                            projectName === 'All Projects' ? 
+                                <td>Project</td> 
+                                : null
+                        }
+                        <td>Remove Item</td>
+                    </tr>
+                </thead>
+                <tbody>
                 {   
                     todos?.map(todo => {
-                        return <TodoItem key={todo._id} todo={todo} onRemove={refreshTodoState} />
+                        return <TodoItem key={todo._id} todo={todo} project={projectName} onRemove={refreshTodoState} />
                     })
                 }
-            </ul>
+                </tbody>
+            </table>
        </div>
     )
 }
