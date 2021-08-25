@@ -11,9 +11,6 @@ function CreateTodo(props) {
     // const [message, setMessage] = useState(null)
     const authContext = useContext(AuthContext)
 
-    console.log(props)
-
-
     function handleSubmit(e){
         e.preventDefault()
         console.log(props.project)

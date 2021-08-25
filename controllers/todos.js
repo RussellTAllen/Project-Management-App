@@ -19,7 +19,9 @@ module.exports = {
                         if(err)
                             res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
                         else{
-                            res.status(200).json({ todos: document.todos, authenticated: true })
+                            res.status(200).json({ 
+                                todos: document.todos, 
+                                authenticated: true })
                         }
                 
                     })
@@ -27,6 +29,7 @@ module.exports = {
     addTodo: async (req, res) => {
         console.log('req.body: ')
         console.log(req.body)
+       
         const todo = await Todo.create({
                 item: req.body.item,
                 project: req.body.project,
@@ -34,6 +37,8 @@ module.exports = {
                 created: Date.now(),
                 completed: false
             })
+    
+        
 
         // const todo = new Todo({
         //     item: req.body.item,

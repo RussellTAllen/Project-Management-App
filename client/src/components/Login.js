@@ -20,8 +20,9 @@ function Login(props) {
                 authContext.setUser(user)
                 authContext.setIsAuthenticated(isAuthenticated)
                 props.history.push('/todos')
-            }else
+            }else{
                 setMessage(message)
+            }
         })
     }
 
@@ -29,6 +30,7 @@ function Login(props) {
         <div>
             <form onSubmit={onSubmit}>
                 <h3>Please sign in</h3>
+                {message ? <Message message={message} /> : null}
                 <label htmlFor="username" className="sr-only">Username: </label>
                 <input type="text" 
                         name="username" 
@@ -44,7 +46,6 @@ function Login(props) {
                 />
                 <button className="btn btn-lg btn-primary btn-block" type="submit">Login</button>
             </form>
-            {message ? <Message message={message} /> : null}
         </div>
     )
 }

@@ -1,3 +1,5 @@
+
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -18,10 +20,16 @@ h1{
 thead{
   background: rgb(209, 209, 209);
 }
+thead tr td{
+  cursor: pointer;
+}
 tbody tr:nth-child(even){
   background: rgb(212, 255, 255);
 }
 td{
   padding: 5px 15px;
   border: 1px dotted black;
+}
+.date{
+  cursor: pointer;
 }

@@ -5,9 +5,6 @@ import TodoService from '../services/TodoService'
 function TodoItem(props) {
     const todoID = props.todo._id
 
-    console.log(props.todo.project)
-    console.log(props.project)
-
     function handleRemove(e){
         TodoService.removeTodo(todoID)
             .then(data => console.log(data))

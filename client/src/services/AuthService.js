@@ -10,8 +10,13 @@ export default {
         .then(res => {
             if(res.status !== 401)
                 return res.json().then(data => data)
-            else
-                return { isAuthenticated: false, user: { username: '', role: '', todos: [], projects: [] }}
+            else{
+                return { 
+                    isAuthenticated: false, 
+                    user: { username: '', role: '', todos: [], projects: [] },
+                    message: { msgBody: 'Invalid username and/or password', msgError: true }
+                }
+            }
         })
     },
     register: user => {
