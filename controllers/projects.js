@@ -43,13 +43,12 @@ module.exports = {
                     if(err)
                         res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
                     else{
-                        console.log(document.todos)
                         if (req.params.id !== 'all-projects'){
                             document.todos = document.todos.filter(todo => String(todo.project._id) === req.params.id)
                         }else{
                             document.todos = document.todos
-                            console.log(document.todos)
                         }
+                        console.log('project controller todos: '+document.todos)
                         res.status(200).json({ todos: document.todos, authenticated: true })
                     }
                 })

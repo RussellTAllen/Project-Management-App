@@ -1,6 +1,6 @@
 export default {
     getTodos: () => {
-        return fetch('/todos')
+        return fetch('/api/todos')
             .then(response => {
         // passport sends a 401 status if unathenticated
                 if (response.status !== 401) {
@@ -13,7 +13,7 @@ export default {
     createTodo: (todo, project, priority) => {
         console.log('todo service: ')
         console.log(todo, project, priority  )
-        return fetch('/todos/addTodo', {
+        return fetch('/api/todos/addTodo', {
             method: 'POST',
             body: JSON.stringify({
                 item: todo.item, 
@@ -34,7 +34,7 @@ export default {
     toggleComplete: todoID => {
         console.log('todo service id:')
         console.log(todoID)
-        return fetch('/todos/toggleComplete', {
+        return fetch('/api/todos/toggleComplete', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -49,7 +49,7 @@ export default {
         })
     },
     removeTodo: id => {
-        return fetch('/todos/removeTodo', {
+        return fetch('/api/todos/removeTodo', {
             method: 'DELETE',
             body: JSON.stringify({
                 todoID: id

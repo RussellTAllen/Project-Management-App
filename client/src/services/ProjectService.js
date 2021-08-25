@@ -1,6 +1,6 @@
 export default {
     getProjects: () => {
-        return fetch('/projects')
+        return fetch('/api/projects')
             .then(response => {
         // passport sends a 401 status if unathenticated
                 if (response.status !== 401) {
@@ -12,7 +12,7 @@ export default {
     },
     getTodosByProject: project => {
         console.log(project)
-        return fetch('/projects/'+project)
+        return fetch('/api/projects/'+project)
             .then(response => {
                 if (response.status !== 401) {
                     return response.json().then(data => {
@@ -25,7 +25,7 @@ export default {
     },
     createProject: project => {
         console.log(project)
-        return fetch('/projects/createProject', {
+        return fetch('/api/projects/createProject', {
             method: 'POST',
             body: JSON.stringify(project),
             headers: {

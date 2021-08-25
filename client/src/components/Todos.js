@@ -20,19 +20,19 @@ function Todos(props) {
     const [clicked, setClicked] = useState(false)
     const [todo, setTodo] = useState({ item: '' })
     const [todos, setTodos] = useState([])
-    // const [selectedProject, setSelectedProject] = useState({})
+    const [rawTodos, setRawTodos] = useState([])
     const [createProject, setCreateProject] = useState({ name: '' })
     const [project, setProject] = useState('all-projects')
     const [priority, setPriority] = useState('Low')
     const [projectName, setProjectName] = useState('All Projects')
     const [projects, setProjects] = useState([])
-    const [ascending, setAscending] = useState(false)
     const [message, setMessage] = useState(null)
     const authContext = useContext(AuthContext)
 
     useEffect(() => {
         TodoService.getTodos().then(data => {
-            setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed))
+            setRawTodos(data.todos)
+            setTodos(data.todos.filter(todo => clicked ? todo.completed : !todo.completed))
         })
     },[])
 
@@ -43,27 +43,30 @@ function Todos(props) {
     },[])
 
     function handleSortProjectChange(project, projectName){
-        console.log(project)
         setProject(project)
         setProjectName(projectName)
-        ProjectService.getTodosByProject(project).then(data => {
-            console.log(data)
-            setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed))
-        })
+        const filteredTodos = rawTodos
+                                .filter(todo => project === 'all-projects' || todo.project._id === project)
+                                .filter(todo => clicked ? todo.completed : !todo.completed)
+        setTodos(filteredTodos)
+
+        // CALLING DB TO SORT TODOS... not efficient
+        // ProjectService.getTodosByProject(project).then(data => {
+        //     setRawTodos(data.todos)
+        //     const filteredTodos = data.todos.filter(todo => clicked ? todo.completed : !todo.completed)
+        //     setTodos(filteredTodos)
+        // })
     }
 
     function handleTodoChange(todo){
-        console.log(todo)
         setTodo(todo)
     }
 
     function handleProjectCreateChange(createProject){
-        console.log(createProject)
         setCreateProject(createProject)
     }
 
     function handlePriorityChange(priority){
-        console.log(priority)
         setPriority(priority)
     }
 
@@ -72,7 +75,9 @@ function Todos(props) {
             const { message } = data
             if(!message.msgError){
                 ProjectService.getTodosByProject(project).then(data =>{
-                    setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed))
+                    setRawTodos(data.todos)
+                    const filteredTodos = data.todos.filter(todo => clicked ? todo.completed : !todo.completed)
+                    setTodos(filteredTodos)
                     setMessage(message)
                     resetTodoForm()
                 })
@@ -87,15 +92,11 @@ function Todos(props) {
     }
 
     function handleProjectCreateSubmit(createProject){
-        console.log('project: '+createProject)
         ProjectService.createProject(createProject).then(data => {
             const { message } = data
-            console.log('data from handleProject submission: ')
-            console.log(data)
             
             if(!message.msgError){
                 ProjectService.getProjects().then(data => {
-                    console.log(data)
                     setProjects(data.projects)
                 })
                 console.log('Created new project!')
@@ -104,7 +105,6 @@ function Todos(props) {
                 setMessage(message)
             }
         })
-  
     }
 
     function resetTodoForm(){
@@ -118,46 +118,83 @@ function Todos(props) {
 
     function refreshTodoState(){
         ProjectService.getTodosByProject(project).then(data => {
-            setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed))
+            setRawTodos(data.todos)
+            const filteredTodos = data.todos.filter(todo => clicked ? todo.completed : !todo.completed)
+            setTodos(filteredTodos)
         })
     }
 
     function sortByPriority(){
-        ProjectService.getTodosByProject(project).then(data => {
-            setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed).sort((a,b) => priorities[b.priority] - priorities[a.priority]))
-        })
+        const filteredTodos = rawTodos
+                                .filter(todo => project === 'all-projects' || todo.project._id === project)
+                                .filter(todo => !clicked ? !todo.completed : todo.completed)
+                                .sort((a,b) => priorities[b.priority] - priorities[a.priority])
+        setTodos(filteredTodos)
+
+        // QUERY TO DB TO SORT ... not efficient
+        // ProjectService.getTodosByProject(project).then(data => {
+        //     setRawTodos(data.todos)
+        //     const filteredTodos = data.todos.filter(todo => !clicked ? !todo.completed : todo.completed).sort((a,b) => priorities[b.priority] - priorities[a.priority])
+        //     setTodos(filteredTodos)
+        //     // setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed).sort((a,b) => priorities[b.priority] - priorities[a.priority]))
+        // })
     }
     
     function sortByRecentDate(){
-            ProjectService.getTodosByProject(project).then(data => {
-                setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed).sort((a,b) => a.created > b.created ? -1 : 1))
-            })
+        const filteredTodos = rawTodos
+                                .filter(todo => project === 'all-projects' || todo.project._id === project)
+                                .filter(todo => !clicked ? !todo.completed : todo.completed)
+                                .sort((a,b) => a.created > b.created ? -1 : 1)
+        setTodos(filteredTodos)
+        // QUERY TO DB TO SORT ... not efficient
+        // ProjectService.getTodosByProject(project).then(data => {
+        //     setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed).sort((a,b) => a.created > b.created ? -1 : 1))
+        // })
     }
 
     function sortByOldestDate(){
-            ProjectService.getTodosByProject(project).then(data => {
-                setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed).sort((a,b) => a.created > b.created ? 1 : -1))
-            })
+        const filteredTodos = rawTodos
+                                .filter(todo => project === 'all-projects' || todo.project._id === project)
+                                .filter(todo => !clicked ? !todo.completed : todo.completed)
+                                .sort((a,b) => a.created > b.created ? 1 : -1)
+        setTodos(filteredTodos)
+
+        // QUERY TO DB TO SORT ... not efficient
+            // ProjectService.getTodosByProject(project).then(data => {
+            //     setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed).sort((a,b) => a.created > b.created ? 1 : -1))
+            // })
     }
 
-    function toggleComplete(todo){
-        console.log(todo)
+    function toggleActiveTodos(){
+        const filteredTodos = rawTodos
+                                .filter(todo => project === 'all-projects' || todo.project._id === project)
+                                .filter(todo => clicked ? !todo.completed : todo.completed)
+                                .sort((a,b) => priorities[b.priority] - priorities[a.priority])
+        setTodos(filteredTodos)
+        setClicked(prevState => !prevState)
     }
 
-    function seeCompletedTodos(e){
-        setClicked(!clicked)
-        TodoService.getTodos().then(data => {
-            setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed))
-        })
-        e.target.textContent = 'View Active Todos'
+    function seeCompletedTodos(){
+        console.log('seeCompletedTodos')
+        
+        console.log(todos)
+        const filteredTodos = todos.filter(todo => todo.completed)
+        console.log(filteredTodos)
+        setTodos(todos => filteredTodos)
+         
+        setClicked(prevState => !prevState)
+        console.log(clicked)
     }
-
-    function seeActiveTodos(e){
-        setClicked(!clicked)
-        TodoService.getTodos().then(data => {
-            setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed))
-        })
-        e.target.textContent = 'View Completed Todos'
+        
+    function seeActiveTodos(){
+        console.log('seeActiveTodos')
+        
+        console.log(todos)
+        const filteredTodos = todos.filter(todo => !todo.completed)
+        console.log(filteredTodos)
+        setTodos(todos => filteredTodos)
+        
+        setClicked(prevState => !prevState)
     }
 
     return (
@@ -170,54 +207,62 @@ function Todos(props) {
             <hr />
             <SortProject projects={projects} onProjectSort={handleSortProjectChange} />
             {
-                projects.length > 0 ?
-                    <CreateTodo 
-                            todo={todo} 
-                            project={project}
-                            priority={priority}
-                            onTodoChange={handleTodoChange} 
-                            onTodoSubmit={handleTodoSubmit} 
-                            onPriorityChange={handlePriorityChange} 
-                    />
-                    : <h3>To Create A Todo, First Create A Project</h3>
+            projects.length > 0 ?
+                <CreateTodo 
+                        todo={todo} 
+                        project={project}
+                        priority={priority}
+                        onTodoChange={handleTodoChange} 
+                        onTodoSubmit={handleTodoSubmit} 
+                        onPriorityChange={handlePriorityChange} 
+                />
+                : <h3>To Create A Todo, First Create A Project</h3>
             }
 
             <hr />
-
-            <h3>Active Todos for <em>{projectName}</em></h3>
-            <button onClick={!clicked ? seeCompletedTodos : seeActiveTodos}>View Completed Todos</button>
-            <table>
-                <thead>
-                    <tr>
-                        <td>Done</td>
-                        <td>Todo Item</td>
-                        <td onClick={sortByPriority}>Priority</td>
-                        <td className="date">
-                            <FaArrowUp onClick={sortByRecentDate} /> 
-                            <span>  Date Created  </span>
-                            <FaArrowDown onClick={sortByOldestDate} />
-                        </td>
-                        {
-                            projectName === 'All Projects' ? 
-                                <td>Project</td> 
-                                : null
+            {/* clicked ? seeActiveTodos : seeCompletedTodos */}
+            {
+            todos.length > 0 ?
+                <div>
+                    <h3>{clicked ? 'Completed' : 'Active'} Todos for <em>{projectName}</em></h3>
+                    <button onClick={toggleActiveTodos}>
+                        View {!clicked ? 'Completed' : 'Active'} Todos
+                    </button>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Done</td>
+                                <td>Todo Item</td>
+                                <td onClick={sortByPriority}>Priority</td>
+                                <td className="date">
+                                    <FaArrowUp onClick={sortByRecentDate} /> 
+                                    <span>  Date Created  </span>
+                                    <FaArrowDown onClick={sortByOldestDate} />
+                                </td>
+                                {
+                                    projectName === 'All Projects' ? 
+                                        <td>Project</td> 
+                                        : null
+                                }
+                                <td>Remove Item</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {   
+                            todos?.map(todo => {
+                                return <TodoItem 
+                                                key={todo._id} 
+                                                todo={todo} 
+                                                project={project} 
+                                                onRemove={refreshTodoState}
+                                                />
+                            })
                         }
-                        <td>Remove Item</td>
-                    </tr>
-                </thead>
-                <tbody>
-                {   
-                    todos?.map(todo => {
-                        return <TodoItem 
-                                        key={todo._id} 
-                                        todo={todo} 
-                                        project={project} 
-                                        onRemove={refreshTodoState}
-                                        />
-                    })
-                }
-                </tbody>
-            </table>
+                        </tbody>
+                    </table>
+                </div>
+                : null
+            }
        </div>
     )
 }
