@@ -31,6 +31,23 @@ export default {
             }
         })
     },
+    toggleComplete: todoID => {
+        console.log('todo service id:')
+        console.log(todoID)
+        return fetch('/todos/toggleComplete', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                'todoID': todoID
+            })
+        }).then(response => {
+            if (response.status !== 401){
+                return response.json().then(data => data)
+            }else{
+                return { message: { msgBody: 'Unauthorized', msgError: true }}
+            }
+        })
+    },
     removeTodo: id => {
         return fetch('/todos/removeTodo', {
             method: 'DELETE',

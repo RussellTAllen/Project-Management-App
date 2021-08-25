@@ -85,6 +85,17 @@ module.exports = {
             }
         })
     },
+    toggleComplete: async (req, res) => {
+        console.log('blah ' +req.body.todoID)
+        try{
+            await Todo.findById(req.body.todoID, (err, todo) => {
+                todo.completed = !todo.completed
+                todo.save()
+            })
+        }catch(err){
+            res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
+        }
+    },
     removeTodo: async (req, res) => {
         console.log('controller removeTodo running...')
         try{

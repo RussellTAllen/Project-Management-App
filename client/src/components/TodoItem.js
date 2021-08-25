@@ -17,6 +17,7 @@ function TodoItem(props) {
         props.onRemove()
     }
     
+    // Date Formatting
     let date = new Date(props.todo.created).toDateString()
     date = date.split('')
     date.splice(3, 0, ', ')
@@ -29,9 +30,17 @@ function TodoItem(props) {
        if (props.todo.priority === 'Medium') return 'orange'
        return 'red' 
     }
+
+    function handleCheckboxChange(){
+        console.log(props.todo)
+        TodoService.toggleComplete(props.todo._id).then(data => {
+            console.log(data)
+        })
+    }
     
     return (
         <tr>
+            <td><input type="checkbox" onChange={handleCheckboxChange} checked={props.todo.completed} /></td>
             <td>{props.todo.item}</td>
             <td style={{color: priorityStyle}}>
                     {props.todo.priority}
