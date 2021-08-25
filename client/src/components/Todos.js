@@ -49,13 +49,6 @@ function Todos(props) {
                                 .filter(todo => project === 'all-projects' || todo.project._id === project)
                                 .filter(todo => clicked ? todo.completed : !todo.completed)
         setTodos(filteredTodos)
-
-        // CALLING DB TO SORT TODOS... not efficient
-        // ProjectService.getTodosByProject(project).then(data => {
-        //     setRawTodos(data.todos)
-        //     const filteredTodos = data.todos.filter(todo => clicked ? todo.completed : !todo.completed)
-        //     setTodos(filteredTodos)
-        // })
     }
 
     function handleTodoChange(todo){
@@ -130,14 +123,6 @@ function Todos(props) {
                                 .filter(todo => !clicked ? !todo.completed : todo.completed)
                                 .sort((a,b) => priorities[b.priority] - priorities[a.priority])
         setTodos(filteredTodos)
-
-        // QUERY TO DB TO SORT ... not efficient
-        // ProjectService.getTodosByProject(project).then(data => {
-        //     setRawTodos(data.todos)
-        //     const filteredTodos = data.todos.filter(todo => !clicked ? !todo.completed : todo.completed).sort((a,b) => priorities[b.priority] - priorities[a.priority])
-        //     setTodos(filteredTodos)
-        //     // setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed).sort((a,b) => priorities[b.priority] - priorities[a.priority]))
-        // })
     }
     
     function sortByRecentDate(){
@@ -146,10 +131,6 @@ function Todos(props) {
                                 .filter(todo => !clicked ? !todo.completed : todo.completed)
                                 .sort((a,b) => a.created > b.created ? -1 : 1)
         setTodos(filteredTodos)
-        // QUERY TO DB TO SORT ... not efficient
-        // ProjectService.getTodosByProject(project).then(data => {
-        //     setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed).sort((a,b) => a.created > b.created ? -1 : 1))
-        // })
     }
 
     function sortByOldestDate(){
@@ -158,11 +139,6 @@ function Todos(props) {
                                 .filter(todo => !clicked ? !todo.completed : todo.completed)
                                 .sort((a,b) => a.created > b.created ? 1 : -1)
         setTodos(filteredTodos)
-
-        // QUERY TO DB TO SORT ... not efficient
-            // ProjectService.getTodosByProject(project).then(data => {
-            //     setTodos(data.todos.filter(todo => !clicked ? !todo.completed : todo.completed).sort((a,b) => a.created > b.created ? 1 : -1))
-            // })
     }
 
     function toggleActiveTodos(){
@@ -170,31 +146,11 @@ function Todos(props) {
                                 .filter(todo => project === 'all-projects' || todo.project._id === project)
                                 .filter(todo => clicked ? !todo.completed : todo.completed)
                                 .sort((a,b) => priorities[b.priority] - priorities[a.priority])
-        setTodos(filteredTodos)
-        setClicked(prevState => !prevState)
-    }
-
-    function seeCompletedTodos(){
-        console.log('seeCompletedTodos')
-        
-        console.log(todos)
-        const filteredTodos = todos.filter(todo => todo.completed)
-        console.log(filteredTodos)
-        setTodos(todos => filteredTodos)
-         
-        setClicked(prevState => !prevState)
-        console.log(clicked)
-    }
-        
-    function seeActiveTodos(){
-        console.log('seeActiveTodos')
-        
-        console.log(todos)
-        const filteredTodos = todos.filter(todo => !todo.completed)
-        console.log(filteredTodos)
-        setTodos(todos => filteredTodos)
-        
-        setClicked(prevState => !prevState)
+        if(filteredTodos.length > 0){
+            setTodos(filteredTodos)
+            setClicked(prevState => !prevState)
+        }else 
+            return
     }
 
     return (
@@ -220,7 +176,6 @@ function Todos(props) {
             }
 
             <hr />
-            {/* clicked ? seeActiveTodos : seeCompletedTodos */}
             {
             todos.length > 0 ?
                 <div>

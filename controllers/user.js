@@ -41,4 +41,13 @@ module.exports = {
         res.clearCookie('access_token')
         res.json({ user: { username: '', role: '' }, success: true})
     },
+    getAdmin: async (req, res) => {
+        if(req.user.role === 'admin'){
+            res.status(200).json({ message: { msgBody: 'You are an admin', msgError: false }})
+        }else res.status(403).json({ message: { msgBody: 'You are not an admin', msgError: true }})
+    },
+    getAuthenticated: async (req, res) => {
+        const { username, role } = req.user
+        res.status(200).json({ isAuthenticated: true, user: { username, role }})
+    }
 }
