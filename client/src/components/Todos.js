@@ -69,7 +69,8 @@ function Todos(props) {
             if(!message.msgError){
                 ProjectService.getTodosByProject(project).then(data =>{
                     setRawTodos(data.todos)
-                    const filteredTodos = data.todos.filter(todo => clicked ? todo.completed : !todo.completed)
+                    const filteredTodos = data.todos.filter(todo => !todo.completed)
+                    setClicked(false)
                     setTodos(filteredTodos)
                     setMessage(message)
                     resetTodoForm()
@@ -92,7 +93,6 @@ function Todos(props) {
                 ProjectService.getProjects().then(data => {
                     setProjects(data.projects)
                 })
-                console.log('Created new project!')
                 resetProjectForm()
             }else{
                 setMessage(message)
@@ -108,27 +108,55 @@ function Todos(props) {
         setCreateProject({ 'name': ''})
     }
 
-    function removeTodo(todoID){
-        const tempTodos = todos
-        const filteredTodos = todos.filter(todo => todo._id !== todoID)
+    function handleRemoveTodo(todoID){
+        // ATTEMPT TO GET THE DOM UPDATED BEFORE THE DB QUERY ... maybe not best practice
+        // const tempTodos = todos
+        // const filteredTodos = todos.filter(todo => todo._id !== todoID)
+        //                            .filter(todo => project === 'all-projects' || todo.project._id === project)
+        //                            .filter(todo => clicked ? todo.completed : !todo.completed)
 
-        if (filteredTodos.length > 0 || !clicked){
-            setTodos(filteredTodos)
-        }
+        // if (filteredTodos.length > 0 || !clicked){
+        //     setTodos(filteredTodos)
+        // }
+
+        TodoService.removeTodo(todoID)
+            .then(data => console.log(data))
+            .catch(err => {
+                console.log(err)
+                setMessage(message)
+                // setTodos(tempTodos)
+            })
 
         TodoService.getTodos().then(data => {
             setRawTodos(data.todos)
+            const filteredTodos = data.todos.filter(todo => todo._id !== todoID)
+                                            .filter(todo => project === 'all-projects' || todo.project._id === project)
+                                            .filter(todo => clicked ? todo.completed : !todo.completed)
+            setTodos(filteredTodos)
         }).catch(err => {
             console.log(err)
             setMessage(message)
-            setTodos(tempTodos)
         })
 
-        if (filteredTodos.length === 0 && clicked){
-            setClicked(prevState => !prevState)
-            toggleActiveTodos()
-            setClicked(prevState => !prevState)
-        }
+        // if (filteredTodos.length === 0 && clicked){
+        //     setClicked(prevState => !prevState)
+        //     toggleActiveTodos()
+        //     setClicked(prevState => !prevState)
+        // }
+    }
+
+    function handleToggleComplete(todo){
+        TodoService.toggleComplete(todo._id).then(data => {
+            console.log(data)
+            TodoService.getTodos().then(data => {
+                setRawTodos(data.todos)
+                const filteredTodos = data.todos.filter(todo => project === 'all-projects' || todo.project._id === project)
+                                                .filter(todo => clicked ? todo.completed : !todo.completed)
+                setTodos(filteredTodos)
+            })
+        }).catch(err => {
+            console.log(err)
+        })
     }
 
 
@@ -168,14 +196,16 @@ function Todos(props) {
     }
 
     function toggleActiveTodos(){
+        console.log('toggling active todos...')
         const filteredTodos = rawTodos
                                 .filter(todo => project === 'all-projects' || todo.project._id === project)
                                 .filter(todo => clicked ? !todo.completed : todo.completed)
                                 .sort((a,b) => priorities[b.priority] - priorities[a.priority])
+                                
         if(filteredTodos.length > 0){
             setTodos(filteredTodos)
             setClicked(prevState => !prevState)
-        }else if(clicked){
+        }else{
             alert(`There are no ${clicked ? 'active' : 'completed'} todos for `+projectName)
             return
         }
@@ -232,13 +262,13 @@ function Todos(props) {
                         </thead>
                         <tbody>
                         {   
-                            todos.map(todo => {
+                            todos?.map(todo => {
                                 return <TodoItem 
                                                 key={todo._id} 
                                                 todo={todo} 
                                                 project={project} 
-                                                onRemove={removeTodo}
-                                                onToggleComplete={refreshTodoState}
+                                                onRemove={handleRemoveTodo}
+                                                onToggleComplete={handleToggleComplete}
                                                 />
                             })
                         }

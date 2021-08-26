@@ -6,8 +6,8 @@ function TodoItem(props) {
     const todoID = props.todo._id
 
     function handleRemove(e){
-        TodoService.removeTodo(todoID)
-            .then(data => console.log(data))
+        // TodoService.removeTodo(todoID)
+        //     .then(data => console.log(data))
         // .then(data => {
         //     console.log(data.message)
         //     if(data.message.msgError)
@@ -32,11 +32,7 @@ function TodoItem(props) {
     }
 
     function handleCheckboxChange(){
-        console.log(props.todo)
-        TodoService.toggleComplete(todoID).then(data => {
-            console.log(data)
-        })
-        props.onToggleComplete(todoID)
+        props.onToggleComplete(props.todo)
     }
     
     return (

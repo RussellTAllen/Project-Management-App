@@ -89,8 +89,13 @@ module.exports = {
         console.log('blah ' +req.body.todoID)
         try{
             await Todo.findById(req.body.todoID, (err, todo) => {
-                todo.completed = !todo.completed
-                todo.save()
+                if (err)
+                    res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
+                else{
+                    res.status(200).json({ message: { msgBody: 'Todo complete toggled!', msgError: false }})
+                    todo.completed = !todo.completed
+                    todo.save()
+                }
             })
         }catch(err){
             res.status(500).json({ message: { msgBody: 'Error has occured', msgError: true }})
