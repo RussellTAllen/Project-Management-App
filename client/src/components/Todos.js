@@ -108,13 +108,39 @@ function Todos(props) {
         setCreateProject({ 'name': ''})
     }
 
+    function removeTodo(todoID){
+        const tempTodos = todos
+        const filteredTodos = todos.filter(todo => todo._id !== todoID)
+
+        if (filteredTodos.length > 0 || !clicked){
+            setTodos(filteredTodos)
+        }
+
+        TodoService.getTodos().then(data => {
+            setRawTodos(data.todos)
+        }).catch(err => {
+            console.log(err)
+            setMessage(message)
+            setTodos(tempTodos)
+        })
+
+        if (filteredTodos.length === 0 && clicked){
+            setClicked(prevState => !prevState)
+            toggleActiveTodos()
+            setClicked(prevState => !prevState)
+        }
+    }
+
 
     function refreshTodoState(){
-        ProjectService.getTodosByProject(project).then(data => {
+        TodoService.getTodos().then(data => {
             setRawTodos(data.todos)
-            const filteredTodos = data.todos.filter(todo => clicked ? todo.completed : !todo.completed)
+            const filteredTodos = data.todos
+                                    .filter(todo => project === 'all-projects' || todo.project._id === project)
+                                    .filter(todo => clicked ? todo.completed : !todo.completed)
             setTodos(filteredTodos)
         })
+        console.log(todos)
     }
 
     function sortByPriority(){
@@ -149,8 +175,10 @@ function Todos(props) {
         if(filteredTodos.length > 0){
             setTodos(filteredTodos)
             setClicked(prevState => !prevState)
-        }else 
+        }else if(clicked){
+            alert(`There are no ${clicked ? 'active' : 'completed'} todos for `+projectName)
             return
+        }
     }
 
     return (
@@ -177,7 +205,7 @@ function Todos(props) {
 
             <hr />
             {
-            todos.length > 0 ?
+            rawTodos.length > 0 ?
                 <div>
                     <h3>{clicked ? 'Completed' : 'Active'} Todos for <em>{projectName}</em></h3>
                     <button onClick={toggleActiveTodos}>
@@ -204,19 +232,20 @@ function Todos(props) {
                         </thead>
                         <tbody>
                         {   
-                            todos?.map(todo => {
+                            todos.map(todo => {
                                 return <TodoItem 
                                                 key={todo._id} 
                                                 todo={todo} 
                                                 project={project} 
-                                                onRemove={refreshTodoState}
+                                                onRemove={removeTodo}
+                                                onToggleComplete={refreshTodoState}
                                                 />
                             })
                         }
                         </tbody>
                     </table>
                 </div>
-                : null
+                : <h5>No Todos to Display</h5>
             }
        </div>
     )

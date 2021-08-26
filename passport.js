@@ -3,6 +3,8 @@ const LocalStrategy = require('passport-local').Strategy
 const JwtStrategy = require('passport-jwt').Strategy
 const User = require('./models/User')
 
+require('dotenv').config({ path: './config/.env' })
+
 const cookieExtractor = req => {
     let token = null
     if(req && req.cookies){

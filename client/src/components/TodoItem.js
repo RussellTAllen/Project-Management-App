@@ -14,7 +14,7 @@ function TodoItem(props) {
         //         console.log('error will robinson!')
         //         props.history.push('/')
         // })
-        props.onRemove()
+        props.onRemove(todoID)
     }
     
     // Date Formatting
@@ -33,9 +33,10 @@ function TodoItem(props) {
 
     function handleCheckboxChange(){
         console.log(props.todo)
-        TodoService.toggleComplete(props.todo._id).then(data => {
+        TodoService.toggleComplete(todoID).then(data => {
             console.log(data)
         })
+        props.onToggleComplete(todoID)
     }
     
     return (
